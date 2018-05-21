@@ -40,3 +40,5 @@ Laravel development server started on http://localhost:8000/
 ```
 
 Placing order form is at http://localhost:8000/orders
+
+Once finished please email us a link to gihthub repository with your solution.
