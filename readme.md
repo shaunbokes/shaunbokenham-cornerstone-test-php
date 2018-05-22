@@ -13,11 +13,11 @@ We need to keep a track of what a user orders for billing, and how much stock we
 
 Requirements
 ------------
-0. Clone this repository to your github account and push changes there.
+* clone this repository and push changes to your github account.
 
-1. Implement OrderController::save() method (see php doc for details).
+* implement OrderController::save() method (see php doc for details).
 
-2. Cover CreateOrder service with unit tests.
+* add authentication layer so order form is only available for logged in users
 
 Help
 ----
