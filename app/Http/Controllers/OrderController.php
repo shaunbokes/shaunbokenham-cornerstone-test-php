@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Box;
+use App\Order;
+use App\OrderItem;
 use App\Services\CreateOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class OrderController
@@ -41,19 +44,45 @@ class OrderController extends Controller
             'postcode' => 'required|max:10',
         ]);
 
-        // use CreateOrder service to dispatch order to the warehouse
-        $this->createOrderService->sendOrder(
-            $this->createOrderService->formatOrderOutput(
-                $request->all(),
-                $this->createOrderService->getOrderedBoxDetails($request->input('boxes'))
-            )
+        $orderedBox = $this->createOrderService->getOrderedBoxDetails(
+            $request->input('boxes')
         );
 
+        // use CreateOrder service to dispatch order to the warehouse
+        // $this->createOrderService->sendOrder(
+        //     $this->createOrderService->formatOrderOutput(
+        //         $request->all(),
+        //         $orderedBox
+        //     )
+        // );
+
         // store order and order items in the database with Models provided
+        $order = new Order();
+        $order->fill([
+            'user_id' => Auth::user()->id,
+            'total_cost' => $orderedBox->price
+        ]);
+
+        $order->save();
+
+        $orderItem = new OrderItem();
+        $orderItem->fill([
+            'order_id' => $order->id,
+            'box_id' => $orderedBox->id
+        ]);
+
+        $orderItem->save();
 
         // update box quantity in the database with CreateOrder::updateBoxQuantity()
+        $this->createOrderService->updateBoxQuantity(
+            $orderedBox->id,
+            1
+        );
 
         // display 'thank you' message saying what was ordered
+        return view('order-thank-you', [
+            'customerOrder' => $order
+        ]);
 
         // cover all this stuff with tests, use dependency injection and mocking
     }
