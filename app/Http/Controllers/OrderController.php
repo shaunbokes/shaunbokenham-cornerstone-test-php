@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Box;
+use App\Services\CreateOrder;
 use Illuminate\Http\Request;
 
 /**
@@ -11,6 +12,13 @@ use Illuminate\Http\Request;
  */
 class OrderController extends Controller
 {
+    protected $createOrderService;
+
+    public function __construct(CreateOrder $createOrder)
+    {
+        $this->createOrderService = $createOrder;
+    }
+
     public function index()
     {
         $boxes = Box::all();
@@ -21,15 +29,23 @@ class OrderController extends Controller
     public function save(Request $request)
     {
         // validate input (view needs to display errors)
-        $this->validate($request, [
-            'first_name' => 'required',
-            'surname' => 'required',
-            'email' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'postcode' => 'required',
+        $validData = $this->validate($request, [
+            'boxes' => 'required|integer|max:255',
+            'first_name' => 'required|max:255',
+            'surname' => 'required|max:255',
+            'email' => 'required|email',
+            'address' => 'required|max:255',
+            'city' => 'required|max:255',
+            'postcode' => 'required|max:10',
         ]);
+
         // use CreateOrder service to dispatch order to the warehouse
+        $this->createOrderService->sendOrder(
+            $this->createOrderService->formatOrderOutput(
+                $request->all(),
+                $this->createOrderService->getOrderedBoxDetails($request->input('boxes'))
+            )
+        );
 
         // store order and order items in the database with Models provided
 
