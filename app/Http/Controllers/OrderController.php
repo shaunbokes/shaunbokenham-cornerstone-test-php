@@ -16,6 +16,8 @@ class OrderController extends Controller
 
     public function __construct(CreateOrder $createOrder)
     {
+        $this->middleware('auth');
+
         $this->createOrderService = $createOrder;
     }
 

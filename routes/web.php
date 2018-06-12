@@ -8,3 +8,7 @@ Route::get('/home', 'HomeController@index');
 
 Route::get('/orders', 'OrderController@index');
 Route::post('/orders', 'OrderController@save');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
