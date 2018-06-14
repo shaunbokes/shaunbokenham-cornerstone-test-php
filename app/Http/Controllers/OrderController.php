@@ -49,12 +49,12 @@ class OrderController extends Controller
         );
 
         // use CreateOrder service to dispatch order to the warehouse
-        // $this->createOrderService->sendOrder(
-        //     $this->createOrderService->formatOrderOutput(
-        //         $request->all(),
-        //         $orderedBox
-        //     )
-        // );
+        $this->createOrderService->sendOrder(
+            $this->createOrderService->formatOrderOutput(
+                $request->all(),
+                $orderedBox
+            )
+        );
 
         // store order and order items in the database with Models provided
         $order = new Order();
@@ -83,7 +83,5 @@ class OrderController extends Controller
         return view('order-thank-you', [
             'customerOrder' => $order
         ]);
-
-        // cover all this stuff with tests, use dependency injection and mocking
     }
 }
